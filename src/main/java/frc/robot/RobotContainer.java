@@ -72,11 +72,11 @@ public class RobotContainer {
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     m_driverController.a().whileTrue(new InstantCommand(() -> leds.setState(LEDs.HubState.HUB_ACTIVE), leds));
-    SmartDashboard.putData("Hub Active", new InstantCommand(() -> leds.setState(LEDs.HubState.HUB_ACTIVE), leds));
-
-
-
-
+    SmartDashboard.putData("Hub Active", new InstantCommand(() -> {
+      leds.setState(LEDs.HubState.HUB_ACTIVE);
+      System.out.println("Hub Active");
+    }
+      , leds));
   }
 
   /**
