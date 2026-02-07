@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 
 
@@ -71,6 +72,7 @@ public class RobotContainer {
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     m_driverController.a().whileTrue(new InstantCommand(() -> leds.setState(LEDs.HubState.HUB_ACTIVE), leds));
+    SmartDashboard.putData("Hub Active", new InstantCommand(() -> leds.setState(LEDs.HubState.HUB_ACTIVE), leds));
 
 
 
