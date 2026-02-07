@@ -11,8 +11,17 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDs;
 import frc.robot.util.AllianceShiftMonitor;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+
+
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -32,12 +41,16 @@ public class RobotContainer {
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+      
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     shiftMonitor = new AllianceShiftMonitor(m_driverController, leds);
     configureBindings();
     // Configure the trigger bindings
     configureBindings();
+
+
   }
 
   /**
@@ -56,7 +69,12 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    m_driverController.a().whileTrue(new InstantCommand(() -> leds.setState(LEDs.HubState.HUB_ACTIVE), leds));
+
+
+
+
   }
 
   /**
