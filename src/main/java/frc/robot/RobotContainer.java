@@ -77,7 +77,41 @@ public class RobotContainer {
       System.out.println("Hub Active");
     }
       , leds));
+
+  
+
+       SmartDashboard.putData("Opponent Hub", new InstantCommand(() -> {
+      leds.setState(LEDs.HubState.OPPONENT_HUB);
+      System.out.println("Oponent Hub");
+    }
+      , leds));
+
+       SmartDashboard.putData("Hub Starting Soon", new InstantCommand(() -> {
+      leds.setState(LEDs.HubState.HUB_STARTING_SOON);
+      System.out.println("Hub Starting Soon");
+    }
+      , leds));
+      
+       SmartDashboard.putData("Hub Ending Soon", new InstantCommand(() -> {
+      leds.setState(LEDs.HubState.HUB_ENDING_SOON);
+      System.out.println("Hub Ending Soon");
+    }
+      , leds));
+
+       SmartDashboard.putData("Transition", new InstantCommand(() -> {
+      leds.setState(LEDs.HubState.TRANSITION);
+      System.out.println("Transition");
+    }
+      , leds));
+
+       SmartDashboard.putData("Disabled", new InstantCommand(() -> {
+      leds.setState(LEDs.HubState.DISABLED);
+      System.out.println("Disable");
+    }
+      , leds));
   }
+
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
