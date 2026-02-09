@@ -11,6 +11,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDs;
 import frc.robot.util.AllianceShiftMonitor;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -111,9 +112,24 @@ public class RobotContainer {
       , leds));
 
          
+      SmartDashboard.putData("Force OUR Hub",
+    Commands.runOnce(() -> setHub(LEDs.HubState.HUB_ACTIVE)));
+
+SmartDashboard.putData("Force OPP Hub",
+    Commands.runOnce(() -> setHub(LEDs.HubState.OPPONENT_HUB)));
+
+SmartDashboard.putData("Force TRANSITION",
+    Commands.runOnce(() -> setHub(LEDs.HubState.TRANSITION)));
   }
 
 
+
+  /**
+   * Sets the LEDs hub state.
+   */
+  private void setHub(LEDs.HubState state) {
+    leds.setState(state);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

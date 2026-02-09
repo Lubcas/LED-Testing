@@ -37,6 +37,8 @@ public class AllianceShiftMonitor {
     }
   }
 
+  private LEDs.HubState currentHub = LEDs.HubState.TRANSITION;
+
   private static final Time WARNING = Seconds.of(5);
   private static final Time SHIFT_QUIET = Seconds.of(20);
   private static final Time RUMBLE_PULSE = Seconds.of(0.3);
@@ -78,21 +80,37 @@ public class AllianceShiftMonitor {
 
     updateDashboard();
   }
+  private void setHub(LEDs.HubState hub) {
+    if (hub == currentHub) return; // Prevent spamming
+
+    currentHub = hub;
+
+    // Update LEDs
+    leds.setState(hub);
+
+    // Update SmartDashboard
+    SmartDashboard.putString("Shift/Hub Active", hub.name());
+}
 
   /** Loser: odd shifts (1, 3) are ours. */
   private Command buildLoserCommand() {
     return Commands.sequence(
         // TRANSITION: 10s total, rumble3x at 5s mark
+         Commands.runOnce(() -> setHub(LEDs.HubState.TRANSITION)),
         Commands.deadline(wait(Seconds.of(10)), Commands.sequence(wait(WARNING), rumble3x())),
         // SHIFT 1 (ours): 20s quiet + 5s rumble = 25s total
+        Commands.runOnce(() -> setHub(LEDs.HubState.HUB_ACTIVE)),
         wait((SHIFT_QUIET)),
         rumble((WARNING)),
         // SHIFT 2 (opponent): 25s total, rumble3x at 20s mark
+        Commands.runOnce(() -> setHub(LEDs.HubState.OPPONENT_HUB)),
         Commands.deadline(wait(Seconds.of(25)), Commands.sequence(wait(SHIFT_QUIET), rumble3x())),
         // SHIFT 3 (ours): 20s quiet + 5s rumble = 25s total
+        Commands.runOnce(() -> setHub(LEDs.HubState.HUB_ACTIVE)),
         wait(SHIFT_QUIET),
         rumble(WARNING),
         // SHIFT 4 (opponent): 25s total, rumble3x at 20s mark
+        Commands.runOnce(() -> setHub(LEDs.HubState.OPPONENT_HUB)),
         Commands.deadline(wait(Seconds.of(25)), Commands.sequence(wait(SHIFT_QUIET), rumble3x()))
         // Total: 10 + 25 + 25 + 25 + 25 = 110s (+ 20s AUTO = 130s)
         );
@@ -102,15 +120,20 @@ public class AllianceShiftMonitor {
   private Command buildWinnerCommand() {
     return Commands.sequence(
         // TRANSITION: 10s total, rumble at 5s mark (transition ending soon)
+        Commands.runOnce(() -> setHub(LEDs.HubState.TRANSITION)),
         Commands.deadline(wait(Seconds.of(10)), Commands.sequence(wait(WARNING), rumble(WARNING))),
         // SHIFT 1 (opponent): 25s total, rumble3x at 20s mark (for our shift 2)
+        Commands.runOnce(() -> setHub(LEDs.HubState.OPPONENT_HUB)),
         Commands.deadline(wait(Seconds.of(25)), Commands.sequence(wait(SHIFT_QUIET), rumble3x())),
         // SHIFT 2 (ours): 20s quiet + 5s rumble = 25s total
+        Commands.runOnce(() -> setHub(LEDs.HubState.HUB_ACTIVE)),
         wait(SHIFT_QUIET),
         rumble(WARNING),
         // SHIFT 3 (opponent): 25s total, rumble3x at 20s mark (for our shift 4)
+        Commands.runOnce(() -> setHub(LEDs.HubState.OPPONENT_HUB)),
         Commands.deadline(wait(Seconds.of(25)), Commands.sequence(wait(SHIFT_QUIET), rumble3x())),
         // SHIFT 4 (ours): 20s quiet + 5s rumble = 25s total
+         Commands.runOnce(() -> setHub(LEDs.HubState.HUB_ACTIVE)),
         wait(SHIFT_QUIET),
         rumble(WARNING)
         // Total: 10 + 25 + 25 + 25 + 25 = 110s (+ 20s AUTO = 130s)
