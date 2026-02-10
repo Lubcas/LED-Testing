@@ -109,6 +109,17 @@ public class RobotContainer {
       System.out.println("Disable");
     }
       , leds));
+       SmartDashboard.putData("Rainbow", new InstantCommand(() -> {
+      leds.setRainbow();
+      System.out.println("Rainbow");
+    }
+      , leds));
+
+       SmartDashboard.putData("Fire", new InstantCommand(() -> {
+      leds.setFire();
+      System.out.println("Fire");
+    }
+      , leds));
   }
 
 
